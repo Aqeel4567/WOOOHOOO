@@ -120,6 +120,12 @@
       -webkit-text-fill-color: transparent;
       background-clip: text;
       animation: gradientShift 3s ease infinite;
+      transition: opacity 0.3s ease;
+    }
+
+    h1.hidden {
+      opacity: 0;
+      pointer-events: none;
     }
 
     @keyframes gradientShift {
@@ -239,6 +245,16 @@
       0% { transform: scale(0.5) rotate(-5deg); }
       50% { transform: scale(1.1) rotate(5deg); }
       100% { transform: scale(1) rotate(0deg); }
+    }
+
+    /* Hide valentine question when showing confirmation */
+    .hide-question h1 {
+      display: none;
+    }
+
+    /* Hide cat when showing confirmation */
+    .hide-question .art {
+      display: none;
     }
 
     .fireworks {
@@ -384,7 +400,7 @@
       </path>
     </svg>
 
-    <h1>FATIIMAHH</h1>
+    <h1>FATIIMAHH will you be my valentine?</h1>
 
     <section class="button-zone" id="zone">
       <button id="yesBtn">Yes</button>
@@ -393,8 +409,21 @@
 
     <div class="click-counter" id="clickCounter">No clicks: <span id="noCount">0</span></div>
 
+    <!-- Confirmation section -->
+    <section class="confirmation" id="confirmation" style="display: none;">
+      <h2 style="font-size: clamp(24px, 3.5vw, 36px); margin: 20px 0;">Pakka bbg?</h2>
+      <div class="button-zone" id="confirmZone">
+        <button id="confirmYesBtn">Yes</button>
+        <button id="confirmNoBtn">No</button>
+      </div>
+      <div class="button-zone-single" id="confirmZoneSingle" style="display: none; text-align: center;">
+        <button id="nahiBtn" style="position: static; transform: none; margin: 0 auto; display: block;">NAHII</button>
+      </div>
+    </section>
+
     <section class="result" id="result">
-      <h2>YAYYYYYYYYYYYYYY</h2>
+      <h2>YAYYYYYYYYYY</h2>
+      <h3>wooohooooo</h3>
       <div class="heart-icon">💗</div>
     </section>
   </main>
@@ -403,10 +432,20 @@
     const zone = document.getElementById("zone");
     const yesBtn = document.getElementById("yesBtn");
     const noBtn = document.getElementById("noBtn");
+    const confirmation = document.getElementById("confirmation");
+    const confirmZone = document.getElementById("confirmZone");
+    const confirmZoneSingle = document.getElementById("confirmZoneSingle");
+    const confirmYesBtn = document.getElementById("confirmYesBtn");
+    const confirmNoBtn = document.getElementById("confirmNoBtn");
+    const nahiBtn = document.getElementById("nahiBtn");
     const result = document.getElementById("result");
     const clickCounter = document.getElementById("clickCounter");
     const noCount = document.getElementById("noCount");
+    const heading = document.querySelector("h1");
+    const catArt = document.querySelector(".art");
+    const originalCatHTML = catArt.innerHTML; // Store original cat SVG
     let noClicks = 0;
+    let confirmYesScale = 1;
 
     /* ---------- FLOATING HEARTS BACKGROUND ---------- */
     function createFloatingHeart() {
@@ -500,6 +539,11 @@
       yesBtn.style.transform = `translateY(-50%) scale(${yesScale})`;
     }
 
+    function growConfirmYes() {
+      confirmYesScale = Math.min(2.2, confirmYesScale + 0.12);
+      confirmYesBtn.style.transform = `translateY(-50%) scale(${confirmYesScale})`;
+    }
+
     /* ---------- NO BUTTON RUNS AWAY ---------- */
     function clamp(n, min, max) {
       return Math.max(min, Math.min(max, n));
@@ -528,6 +572,29 @@
       growYes();
     }
 
+    function moveConfirmNo(px, py) {
+      const z = confirmZone.getBoundingClientRect();
+      const b = confirmNoBtn.getBoundingClientRect();
+
+      let dx = (b.left + b.width / 2) - px;
+      let dy = (b.top + b.height / 2) - py;
+      let mag = Math.hypot(dx, dy) || 1;
+      dx /= mag;
+      dy /= mag;
+
+      let newLeft = (b.left - z.left) + dx * 150;
+      let newTop  = (b.top - z.top) + dy * 150;
+
+      newLeft = clamp(newLeft, 0, z.width - b.width);
+      newTop  = clamp(newTop, 0, z.height - b.height);
+
+      confirmNoBtn.style.left = newLeft + "px";
+      confirmNoBtn.style.top = newTop + "px";
+      confirmNoBtn.style.transform = "none";
+
+      growConfirmYes();
+    }
+
     zone.addEventListener("pointermove", e => {
       const b = noBtn.getBoundingClientRect();
       const d = Math.hypot(
@@ -537,7 +604,42 @@
       if (d < 140) moveNo(e.clientX, e.clientY);
     });
 
-    noBtn.addEventListener("click", e => {
+    confirmZone.addEventListener("pointermove", e => {
+      const b = confirmNoBtn.getBoundingClientRect();
+      const d = Math.hypot(
+        (b.left + b.width / 2) - e.clientX,
+        (b.top + b.height / 2) - e.clientY
+      );
+      if (d < 140) moveConfirmNo(e.clientX, e.clientY);
+    });
+
+    /* ---------- FIRST YES/NO CLICK - SHOW CONFIRMATION ---------- */
+    function showConfirmation(answeredYes) {
+      zone.style.display = "none";
+      clickCounter.style.display = "none";
+      heading.classList.add("hidden");
+      confirmation.style.display = "block";
+      
+      // Show different buttons based on first answer
+      if (answeredYes) {
+        // If YES was clicked, show Yes/No buttons and hide cat
+        catArt.classList.add("hidden");
+        confirmZone.style.display = "block";
+        confirmZoneSingle.style.display = "none";
+      } else {
+        // If NO was clicked, show sad emoji and only NAHI button
+        catArt.innerHTML = '<div style="font-size: 120px; text-align: center; margin: 20px 0;">😢</div>';
+        catArt.classList.remove("hidden");
+        confirmZone.style.display = "none";
+        confirmZoneSingle.style.display = "block";
+      }
+    }
+
+    // YES on first question goes to confirmation with Yes/No options
+    yesBtn.addEventListener("click", () => showConfirmation(true));
+    
+    // NO on first question goes to confirmation with only NAHI option
+    noBtn.addEventListener("click", (e) => {
       e.preventDefault();
       noClicks++;
       noCount.textContent = noClicks;
@@ -557,12 +659,56 @@
         },
         colors: ['#e5e7eb', '#d1d5db']
       });
+      
+      // Show confirmation after a short delay
+      setTimeout(() => showConfirmation(false), 300);
     });
 
-    /* ---------- YES CLICK ---------- */
-    yesBtn.addEventListener("click", () => {
-      zone.style.display = "none";
-      clickCounter.style.display = "none";
+    /* ---------- CONFIRM NO CLICK - GO BACK TO START ---------- */
+    confirmNoBtn.addEventListener("click", e => {
+      e.preventDefault();
+      
+      // Add shake animation
+      confirmNoBtn.classList.add('shake');
+      setTimeout(() => confirmNoBtn.classList.remove('shake'), 300);
+      
+      // Mini confetti burst
+      confettiInstance({
+        particleCount: 20,
+        spread: 60,
+        origin: { 
+          x: (e.clientX / window.innerWidth),
+          y: (e.clientY / window.innerHeight)
+        },
+        colors: ['#e5e7eb', '#d1d5db']
+      });
+      
+      // Go back to first question after short delay
+      setTimeout(() => {
+        confirmation.style.display = "none";
+        heading.classList.remove("hidden");
+        catArt.classList.remove("hidden");
+        zone.style.display = "block";
+        clickCounter.style.display = "block";
+      }, 300);
+    });
+
+    /* ---------- NAHI BUTTON CLICK - GO BACK TO START ---------- */
+    nahiBtn.addEventListener("click", e => {
+      e.preventDefault();
+      
+      // Restore original cat SVG
+      catArt.innerHTML = originalCatHTML;
+      
+      // Go back to first question
+      confirmation.style.display = "none";
+      heading.classList.remove("hidden");
+      catArt.classList.remove("hidden");
+      zone.style.display = "block";
+      clickCounter.style.display = "block";
+    });
+    confirmYesBtn.addEventListener("click", () => {
+      confirmation.style.display = "none";
       result.style.display = "block";
       resizeConfettiCanvas();
       fullScreenConfetti();
