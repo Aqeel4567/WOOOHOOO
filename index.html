@@ -106,6 +106,11 @@
       animation: bounce 2s ease-in-out infinite;
     }
 
+    /* Hidden class works */
+    .art.hidden {
+      display: none;
+    }
+
     @keyframes bounce {
       0%, 100% { transform: translateY(0); }
       50% { transform: translateY(-10px); }
@@ -163,8 +168,8 @@
       color: #fff;
       animation: pulse 1.5s ease-in-out infinite;
     }
-    
-    #yesBtn:hover { 
+
+    #yesBtn:hover {
       background: var(--yesHover);
       box-shadow: 0 12px 30px rgba(255, 59, 122, 0.4);
     }
@@ -181,20 +186,37 @@
       transition: all 0.15s ease;
     }
 
-    #noBtn:hover {
-      background: #d1d5db;
+    #noBtn:hover { background: #d1d5db; }
+
+    /* Confirmation buttons match main buttons */
+    #confirmYesBtn {
+      left: 18%;
+      background: var(--yes);
+      color: #fff;
+      animation: pulse 1.5s ease-in-out infinite;
     }
 
-    /* Shake animation when "No" is clicked */
+    #confirmYesBtn:hover {
+      background: var(--yesHover);
+      box-shadow: 0 12px 30px rgba(255, 59, 122, 0.4);
+    }
+
+    #confirmNoBtn {
+      left: 62%;
+      background: #e5e7eb;
+      color: #111827;
+    }
+
+    #confirmNoBtn:hover { background: #d1d5db; }
+
+    /* Shake animation */
     @keyframes shake {
       0%, 100% { transform: translateY(-50%) translateX(0); }
       25% { transform: translateY(-50%) translateX(-10px); }
       75% { transform: translateY(-50%) translateX(10px); }
     }
 
-    .shake {
-      animation: shake 0.3s ease;
-    }
+    .shake { animation: shake 0.3s ease; }
 
     /* Click counter */
     .click-counter {
@@ -205,9 +227,7 @@
       transition: opacity 0.3s;
     }
 
-    .click-counter.visible {
-      opacity: 1;
-    }
+    .click-counter.visible { opacity: 1; }
 
     /* Heart trail effect */
     .heart-trail {
@@ -237,7 +257,7 @@
 
     .result h2 {
       font-size: clamp(30px, 4.5vw, 46px);
-      margin: 10px 0;
+      margin: 10px 0 4px;
       animation: celebrate 0.5s ease;
     }
 
@@ -245,23 +265,6 @@
       0% { transform: scale(0.5) rotate(-5deg); }
       50% { transform: scale(1.1) rotate(5deg); }
       100% { transform: scale(1) rotate(0deg); }
-    }
-
-    /* Hide valentine question when showing confirmation */
-    .hide-question h1 {
-      display: none;
-    }
-
-    /* Hide cat when showing confirmation */
-    .hide-question .art {
-      display: none;
-    }
-
-    .fireworks {
-      width: min(380px, 90vw);
-      margin: 15px auto;
-      display: block;
-      border-radius: 12px;
     }
 
     @keyframes pop {
@@ -285,14 +288,12 @@
 </head>
 
 <body>
-  <!-- Floating hearts background -->
   <div class="floating-hearts" id="floatingHearts"></div>
-
   <canvas id="confettiCanvas"></canvas>
 
   <main class="card">
-    <!-- CUTE CAT WITH HEART -->
-    <svg class="art" viewBox="0 0 320 240" xmlns="http://www.w3.org/2000/svg">
+    <!-- CAT -->
+    <svg class="art" id="catArt" viewBox="0 0 320 240" xmlns="http://www.w3.org/2000/svg">
       <defs>
         <linearGradient id="fur" x1="0" x2="1">
           <stop offset="0" stop-color="#ffa5d8"/>
@@ -304,7 +305,6 @@
         </linearGradient>
       </defs>
 
-      <!-- Heart above cat -->
       <path d="M250 50 C250 33 270 25 282 38
                C294 25 314 33 314 50
                C314 78 282 92 282 106
@@ -321,34 +321,21 @@
           keySplines="0.4 0 0.2 1; 0.4 0 0.2 1"/>
       </path>
 
-      <!-- Cat head -->
       <circle cx="160" cy="120" r="50" fill="url(#fur)"/>
-      
-      <!-- Left ear -->
+
       <path d="M120 85 L110 50 L135 75 Z" fill="url(#fur)">
-        <animateTransform
-          attributeName="transform"
-          type="rotate"
-          values="0 120 85;-8 120 85;0 120 85"
-          dur="2s"
-          repeatCount="indefinite"/>
-      </path>
-      
-      <!-- Right ear -->
-      <path d="M200 85 L210 50 L185 75 Z" fill="url(#fur)">
-        <animateTransform
-          attributeName="transform"
-          type="rotate"
-          values="0 200 85;8 200 85;0 200 85"
-          dur="2s"
-          repeatCount="indefinite"/>
+        <animateTransform attributeName="transform" type="rotate"
+          values="0 120 85;-8 120 85;0 120 85" dur="2s" repeatCount="indefinite"/>
       </path>
 
-      <!-- Inner ears (pink) -->
+      <path d="M200 85 L210 50 L185 75 Z" fill="url(#fur)">
+        <animateTransform attributeName="transform" type="rotate"
+          values="0 200 85;8 200 85;0 200 85" dur="2s" repeatCount="indefinite"/>
+      </path>
+
       <path d="M120 80 L115 60 L130 75 Z" fill="#ffb3d9"/>
       <path d="M200 80 L205 60 L190 75 Z" fill="#ffb3d9"/>
 
-      <!-- Eyes -->
       <ellipse cx="145" cy="115" rx="8" ry="10" fill="#2d3748">
         <animate attributeName="ry" values="10;2;10" dur="3s" repeatCount="indefinite"/>
       </ellipse>
@@ -356,47 +343,27 @@
         <animate attributeName="ry" values="10;2;10" dur="3s" repeatCount="indefinite"/>
       </ellipse>
 
-      <!-- Eye highlights -->
       <circle cx="147" cy="113" r="3" fill="white"/>
       <circle cx="177" cy="113" r="3" fill="white"/>
 
-      <!-- Nose -->
       <path d="M160 125 L155 132 L165 132 Z" fill="#ff7aa2"/>
+      <path d="M155 132 Q160 138 165 132"
+            stroke="#ff7aa2" stroke-width="2" fill="none" stroke-linecap="round"/>
 
-      <!-- Mouth (cute smile) -->
-      <path d="M155 132 Q160 138 165 132" 
-            stroke="#ff7aa2" 
-            stroke-width="2" 
-            fill="none" 
-            stroke-linecap="round"/>
-
-      <!-- Whiskers (left) -->
       <line x1="110" y1="120" x2="130" y2="118" stroke="#ff85c8" stroke-width="2" stroke-linecap="round"/>
       <line x1="110" y1="128" x2="130" y2="128" stroke="#ff85c8" stroke-width="2" stroke-linecap="round"/>
-      
-      <!-- Whiskers (right) -->
+
       <line x1="210" y1="120" x2="190" y2="118" stroke="#ff85c8" stroke-width="2" stroke-linecap="round"/>
       <line x1="210" y1="128" x2="190" y2="128" stroke="#ff85c8" stroke-width="2" stroke-linecap="round"/>
 
-      <!-- Body -->
       <ellipse cx="160" cy="180" rx="40" ry="35" fill="url(#fur)"/>
-
-      <!-- Paws -->
       <circle cx="140" cy="205" r="12" fill="#ff95ce"/>
       <circle cx="180" cy="205" r="12" fill="#ff95ce"/>
 
-      <!-- Tail -->
-      <path d="M195 170 Q220 150 210 130" 
-            stroke="url(#fur)" 
-            stroke-width="15" 
-            fill="none" 
-            stroke-linecap="round">
-        <animateTransform
-          attributeName="transform"
-          type="rotate"
-          values="0 195 170;10 195 170;0 195 170"
-          dur="1.5s"
-          repeatCount="indefinite"/>
+      <path d="M195 170 Q220 150 210 130"
+            stroke="url(#fur)" stroke-width="15" fill="none" stroke-linecap="round">
+        <animateTransform attributeName="transform" type="rotate"
+          values="0 195 170;10 195 170;0 195 170" dur="1.5s" repeatCount="indefinite"/>
       </path>
     </svg>
 
@@ -407,22 +374,28 @@
       <button id="noBtn">No</button>
     </section>
 
-    <div class="click-counter" id="clickCounter">No clicks: <span id="noCount">0</span></div>
+    <div class="click-counter" id="clickCounter">
+      No clicks: <span id="noCount">0</span>
+    </div>
 
-    <!-- Confirmation section -->
+    <!-- CONFIRMATION -->
     <section class="confirmation" id="confirmation" style="display: none;">
       <h2 style="font-size: clamp(24px, 3.5vw, 36px); margin: 20px 0;">pakka bbg?</h2>
-      <div class="button-zone" id="confirmZone">
+
+      <section class="button-zone" id="confirmZone">
         <button id="confirmYesBtn">Yes</button>
         <button id="confirmNoBtn">No</button>
-      </div>
+      </section>
+
       <div class="button-zone-single" id="confirmZoneSingle" style="display: none; text-align: center;">
         <button id="nahiBtn" style="position: static; transform: none; margin: 0 auto; display: block;">NAHI</button>
       </div>
     </section>
 
+    <!-- RESULT -->
     <section class="result" id="result">
       <h2>YAYYYYYYYYYYYYYY</h2>
+      <p style="margin: 0; font-size: 22px; font-weight: 700;">wooohoooo</p>
       <div class="heart-icon">💗</div>
     </section>
   </main>
@@ -431,54 +404,56 @@
     const zone = document.getElementById("zone");
     const yesBtn = document.getElementById("yesBtn");
     const noBtn = document.getElementById("noBtn");
+
     const confirmation = document.getElementById("confirmation");
     const confirmZone = document.getElementById("confirmZone");
     const confirmZoneSingle = document.getElementById("confirmZoneSingle");
+
     const confirmYesBtn = document.getElementById("confirmYesBtn");
     const confirmNoBtn = document.getElementById("confirmNoBtn");
     const nahiBtn = document.getElementById("nahiBtn");
+
     const result = document.getElementById("result");
     const clickCounter = document.getElementById("clickCounter");
     const noCount = document.getElementById("noCount");
+
     const heading = document.querySelector("h1");
-    const catArt = document.querySelector(".art");
-    const originalCatHTML = catArt.innerHTML; // Store original cat SVG
+    const catArt = document.getElementById("catArt");
+
+    const originalCatHTML = catArt.innerHTML;
+
     let noClicks = 0;
+    let yesScale = 1;
     let confirmYesScale = 1;
 
     /* ---------- FLOATING HEARTS BACKGROUND ---------- */
     function createFloatingHeart() {
-      const heart = document.createElement('div');
-      heart.className = 'heart-particle';
-      heart.textContent = '💕';
-      heart.style.left = Math.random() * 100 + '%';
-      heart.style.animationDuration = (Math.random() * 3 + 5) + 's';
-      heart.style.animationDelay = Math.random() * 2 + 's';
-      document.getElementById('floatingHearts').appendChild(heart);
-      
+      const heart = document.createElement("div");
+      heart.className = "heart-particle";
+      heart.textContent = "💕";
+      heart.style.left = Math.random() * 100 + "%";
+      heart.style.animationDuration = (Math.random() * 3 + 5) + "s";
+      heart.style.animationDelay = Math.random() * 2 + "s";
+      document.getElementById("floatingHearts").appendChild(heart);
       setTimeout(() => heart.remove(), 8000);
     }
 
-    // Create initial hearts
     for (let i = 0; i < 15; i++) {
       setTimeout(createFloatingHeart, i * 300);
     }
-    
-    // Keep creating hearts periodically
     setInterval(createFloatingHeart, 800);
 
-    /* ---------- HEART TRAIL ON MOUSE MOVE ---------- */
+    /* ---------- HEART TRAIL ---------- */
     let lastTrail = 0;
-    document.addEventListener('mousemove', (e) => {
+    document.addEventListener("mousemove", (e) => {
       const now = Date.now();
       if (now - lastTrail > 200) {
-        const heart = document.createElement('div');
-        heart.className = 'heart-trail';
-        heart.textContent = '❤️';
-        heart.style.left = e.clientX + 'px';
-        heart.style.top = e.clientY + 'px';
+        const heart = document.createElement("div");
+        heart.className = "heart-trail";
+        heart.textContent = "❤️";
+        heart.style.left = e.clientX + "px";
+        heart.style.top = e.clientY + "px";
         document.body.appendChild(heart);
-        
         setTimeout(() => heart.remove(), 1000);
         lastTrail = now;
       }
@@ -514,7 +489,7 @@
           startVelocity: 50,
           ticks: 200,
           origin: { x: Math.random(), y: Math.random() * 0.3 },
-          colors: ['#ff3b7a', '#ff6b9d', '#ffd6e7', '#ff1f68']
+          colors: ["#ff3b7a", "#ff6b9d", "#ffd6e7", "#ff1f68"]
         });
         if (Date.now() < end) requestAnimationFrame(frame);
       })();
@@ -526,13 +501,12 @@
           startVelocity: 70,
           ticks: 250,
           origin: { x: 0.5, y: 0.55 },
-          colors: ['#ff3b7a', '#ff6b9d', '#ffd6e7', '#ff1f68']
+          colors: ["#ff3b7a", "#ff6b9d", "#ffd6e7", "#ff1f68"]
         });
       }, 400);
     }
 
     /* ---------- YES BUTTON GROWS ---------- */
-    let yesScale = 1;
     function growYes() {
       yesScale = Math.min(2.2, yesScale + 0.12);
       yesBtn.style.transform = `translateY(-50%) scale(${yesScale})`;
@@ -559,14 +533,14 @@
       dy /= mag;
 
       let newLeft = (b.left - z.left) + dx * 150;
-      let newTop  = (b.top - z.top) + dy * 150;
+      let newTop = (b.top - z.top) + dy * 150;
 
       newLeft = clamp(newLeft, 0, z.width - b.width);
-      newTop  = clamp(newTop, 0, z.height - b.height);
+      newTop = clamp(newTop, 0, z.height - b.height);
 
       noBtn.style.left = newLeft + "px";
       noBtn.style.top = newTop + "px";
-      noBtn.style.transform = "none";
+      noBtn.style.transform = "translateY(-50%)";
 
       growYes();
     }
@@ -582,19 +556,19 @@
       dy /= mag;
 
       let newLeft = (b.left - z.left) + dx * 150;
-      let newTop  = (b.top - z.top) + dy * 150;
+      let newTop = (b.top - z.top) + dy * 150;
 
       newLeft = clamp(newLeft, 0, z.width - b.width);
-      newTop  = clamp(newTop, 0, z.height - b.height);
+      newTop = clamp(newTop, 0, z.height - b.height);
 
       confirmNoBtn.style.left = newLeft + "px";
       confirmNoBtn.style.top = newTop + "px";
-      confirmNoBtn.style.transform = "none";
+      confirmNoBtn.style.transform = "translateY(-50%)";
 
       growConfirmYes();
     }
 
-    zone.addEventListener("pointermove", e => {
+    zone.addEventListener("pointermove", (e) => {
       const b = noBtn.getBoundingClientRect();
       const d = Math.hypot(
         (b.left + b.width / 2) - e.clientX,
@@ -603,7 +577,7 @@
       if (d < 140) moveNo(e.clientX, e.clientY);
     });
 
-    confirmZone.addEventListener("pointermove", e => {
+    confirmZone.addEventListener("pointermove", (e) => {
       const b = confirmNoBtn.getBoundingClientRect();
       const d = Math.hypot(
         (b.left + b.width / 2) - e.clientX,
@@ -612,113 +586,115 @@
       if (d < 140) moveConfirmNo(e.clientX, e.clientY);
     });
 
-    /* ---------- FIRST YES/NO CLICK - SHOW CONFIRMATION ---------- */
+    /* ---------- SHOW CONFIRMATION ---------- */
     function showConfirmation(answeredYes) {
       zone.style.display = "none";
       clickCounter.style.display = "none";
       heading.classList.add("hidden");
       confirmation.style.display = "block";
-      
-      // Show different buttons based on first answer
+
       if (answeredYes) {
-        // If YES was clicked, show Yes/No buttons and hide cat
-        catArt.classList.add("hidden");
+        // KEEP CAT VISIBLE HERE
+        catArt.classList.remove("hidden");
+        catArt.innerHTML = originalCatHTML;
+
         confirmZone.style.display = "block";
         confirmZoneSingle.style.display = "none";
       } else {
-        // If NO was clicked, show sad emoji and only NAHI button
-        catArt.innerHTML = '<div style="font-size: 120px; text-align: center; margin: 20px 0;">😢</div>';
         catArt.classList.remove("hidden");
+        catArt.innerHTML = `
+          <text x="50%" y="55%" text-anchor="middle" font-size="120">😔</text>
+        `;
+
         confirmZone.style.display = "none";
         confirmZoneSingle.style.display = "block";
       }
     }
 
-    // YES on first question goes to confirmation with Yes/No options
     yesBtn.addEventListener("click", () => showConfirmation(true));
-    
-    // NO on first question goes to confirmation with only NAHI option
+
     noBtn.addEventListener("click", (e) => {
       e.preventDefault();
       noClicks++;
       noCount.textContent = noClicks;
-      clickCounter.classList.add('visible');
-      
-      // Add shake animation
-      noBtn.classList.add('shake');
-      setTimeout(() => noBtn.classList.remove('shake'), 300);
-      
-      // Mini confetti burst
+      clickCounter.classList.add("visible");
+
+      noBtn.classList.add("shake");
+      setTimeout(() => noBtn.classList.remove("shake"), 300);
+
       confettiInstance({
         particleCount: 20,
         spread: 60,
-        origin: { 
+        origin: {
           x: (e.clientX / window.innerWidth),
           y: (e.clientY / window.innerHeight)
         },
-        colors: ['#e5e7eb', '#d1d5db']
+        colors: ["#e5e7eb", "#d1d5db"]
       });
-      
-      // Show confirmation after a short delay
+
       setTimeout(() => showConfirmation(false), 300);
     });
 
-    /* ---------- CONFIRM NO CLICK - GO BACK TO START ---------- */
-    confirmNoBtn.addEventListener("click", e => {
+    /* ---------- CONFIRM NO ---------- */
+    confirmNoBtn.addEventListener("click", (e) => {
       e.preventDefault();
-      
-      // Add shake animation
-      confirmNoBtn.classList.add('shake');
-      setTimeout(() => confirmNoBtn.classList.remove('shake'), 300);
-      
-      // Mini confetti burst
+
+      confirmNoBtn.classList.add("shake");
+      setTimeout(() => confirmNoBtn.classList.remove("shake"), 300);
+
       confettiInstance({
         particleCount: 20,
         spread: 60,
-        origin: { 
+        origin: {
           x: (e.clientX / window.innerWidth),
           y: (e.clientY / window.innerHeight)
         },
-        colors: ['#e5e7eb', '#d1d5db']
+        colors: ["#e5e7eb", "#d1d5db"]
       });
-      
-      // Go back to first question after short delay
+
       setTimeout(() => {
         confirmation.style.display = "none";
         heading.classList.remove("hidden");
+
         catArt.classList.remove("hidden");
+        catArt.innerHTML = originalCatHTML;
+
         zone.style.display = "block";
         clickCounter.style.display = "block";
       }, 300);
     });
 
-    /* ---------- NAHI BUTTON CLICK - GO BACK TO START ---------- */
-    nahiBtn.addEventListener("click", e => {
+    /* ---------- NAHI ---------- */
+    nahiBtn.addEventListener("click", (e) => {
       e.preventDefault();
-      
-      // Restore original cat SVG
+
       catArt.innerHTML = originalCatHTML;
-      
-      // Go back to first question
+
       confirmation.style.display = "none";
       heading.classList.remove("hidden");
       catArt.classList.remove("hidden");
       zone.style.display = "block";
       clickCounter.style.display = "block";
     });
+
+    /* ---------- CONFIRM YES = RESULT ---------- */
     confirmYesBtn.addEventListener("click", () => {
       confirmation.style.display = "none";
+
+      // show cat + reset it
+      catArt.classList.remove("hidden");
+      catArt.innerHTML = originalCatHTML;
+
       result.style.display = "block";
       resizeConfettiCanvas();
       fullScreenConfetti();
-      
-      // Extra celebration after 1 second
+
       setTimeout(() => {
         confettiInstance({
           particleCount: 100,
           spread: 120,
           origin: { y: 0.6 },
-          colors: ['#ff3b7a', '#ff6b9d', '#ffd6e7']
+          colors: ["#ff3b7a", "#ff6b9d", "#ffd6e7"]
         });
       }, 1000);
     });
